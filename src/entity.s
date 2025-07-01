@@ -50,7 +50,7 @@ FindSlots:
 	    EmptySlot:
 		sta FreeSlots, y
 		iny
-		cpy #$0f
+		cpy #$10
 		bcc EmptySlot
 		sty EmptyIndex
 		ldy FullIndex
@@ -58,7 +58,7 @@ FindSlots:
 	    FullSlot:
 		sta UsedSlots, y
 		iny
-		cpy #$0f
+		cpy #$10
 		bcc FullSlot
 		sty FullIndex
 		
@@ -100,7 +100,7 @@ FindSlots:
 	    EmptySlot:
 		sta FreeSlots, y
 		iny
-		cpy #$1f
+		cpy #$20
 		bcc EmptySlot
 		sty EmptyIndex
 		ldy FullIndex
@@ -108,7 +108,7 @@ FindSlots:
 	    FullSlot:
 		sta UsedSlots, y
 		iny
-		cpy #$1f
+		cpy #$20
 		bcc FullSlot
 		sty FullIndex
 		
@@ -150,7 +150,7 @@ FindSlots:
 	    EmptySlot:
 		sta FreeSlots, y
 		iny
-		cpy #$3f
+		cpy #$40
 		bcc EmptySlot
 		sty EmptyIndex
 		ldy FullIndex
@@ -158,7 +158,7 @@ FindSlots:
 	    FullSlot:
 		sta UsedSlots, y
 		iny
-		cpy #$3f
+		cpy #$40
 		bcc FullSlot
 		sty FullIndex
 		

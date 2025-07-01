@@ -300,7 +300,7 @@ BtnA:
 InputDone:
     
     
-    ldy #$0e
+    ldy #$0f
 HandlePlayerBullets:
     iny
     ldx UsedSlots, y

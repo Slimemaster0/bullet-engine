@@ -34,7 +34,7 @@
 
 
 
-RESET:
+RESET: ; {{{
 .scope
     sei ; Disable Interupts
     cld ; Turn off decimal as its not supported on the NES
@@ -132,7 +132,7 @@ ClearBackground:
     lda #$40
     sta PlayerPosY
 
-.endscope
+.endscope ; }}}
 
     InfLoop: 
 	jmp InfLoop
@@ -146,8 +146,23 @@ NMI:
     lda #$02
     sta $4014
 
+    lda #$ff
+    ldx #$0f
+ClearOAM:
+    inx
+    sta $0200, x
+    cpx #$ff
+    bne ClearOAM
+
     jsr FindSlots
+
+    ; Decriment fire cool down
+    lda FireCooldown
+    cmp #$00
+    beq BuildPlayerSprite
+    dec FireCooldown
     
+BuildPlayerSprite:
     lda #$00
     sta SpriteIndex
 
@@ -271,9 +286,15 @@ BtnB:
     bne BtnA
     ; To do
 BtnA:
+    lda FireCooldown
+    cmp #$00
+    bne InputDone
+
     txa 
     cmp #%10000000
     bcc InputDone
+    lda #$06
+    sta FireCooldown
     jsr Fire
     
 InputDone:

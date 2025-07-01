@@ -29,7 +29,7 @@ Search:
     lda #$01
     sta Entities, x
     lda PlayerPosX
-    adc #$07 ; Adding 8 because I know the carry flag is set
+    adc #$03 ; Adding 8 because I know the carry flag is set
     sta EntityPosXs, x
     lda PlayerPosY
     sta EntityPosYs, x
@@ -49,9 +49,27 @@ DistroyBullet:
 ; Set X to the ID of the Bullet and Y to the used slot
 BulletTick:
     dec EntityPosYs, x
+    dec EntityPosYs, x
     lda EntityPosYs, x
-    cmp #$ff
-    beq DistroyBullet
+    cmp #$fe
+    bcs DistroyBullet
 
+    ; Build sprite
+    ldy SpriteIndex
+    sta $0200, y
+    iny
+    lda #$02
+    sta $0200, y
+    iny
+    lda #%00000010
+    sta $0200, y
+    iny
+    lda EntityPosXs, x
+    sta $0200, y
+    iny
+    sty SpriteIndex
+
+
+    
 
     rts

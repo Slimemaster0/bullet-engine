@@ -19,7 +19,7 @@ FindSlots:
 
 	Enemies:  ; {{{
 	.scope Enemies
-	    cpx #$10
+	    cpx #$0f
 	    bcs Epilogue
 	    lda Entities, x
 	    inx
@@ -50,7 +50,7 @@ FindSlots:
 	    EmptySlot:
 		sta FreeSlots, y
 		iny
-		cpy #$10
+		cpy #$0f
 		bcc EmptySlot
 		sty EmptyIndex
 		ldy FullIndex
@@ -58,7 +58,7 @@ FindSlots:
 	    FullSlot:
 		sta UsedSlots, y
 		iny
-		cpy #$10
+		cpy #$0f
 		bcc FullSlot
 		sty FullIndex
 		
@@ -69,10 +69,10 @@ FindSlots:
 
 	FriendlyBullets: ; {{{
 	.scope FriendlyBullets
-	    cpx #$20
+	    cpx #$1f
+	    inx
 	    bcs Epilogue
 	    lda Entities, x
-	    inx
 	    cmp #$00
 	    beq EmptySlot
 	    jmp FullSlot
@@ -100,7 +100,7 @@ FindSlots:
 	    EmptySlot:
 		sta FreeSlots, y
 		iny
-		cpy #$20
+		cpy #$1f
 		bcc EmptySlot
 		sty EmptyIndex
 		ldy FullIndex
@@ -108,7 +108,7 @@ FindSlots:
 	    FullSlot:
 		sta UsedSlots, y
 		iny
-		cpy #$20
+		cpy #$1f
 		bcc FullSlot
 		sty FullIndex
 		
@@ -119,7 +119,7 @@ FindSlots:
 	    
 	EnemyBullets: ; {{{
 	.scope EnemyBullets
-	    cpx #$40
+	    cpx #$3f
 	    bcs Epilogue
 	    lda Entities, x
 	    inx
@@ -150,7 +150,7 @@ FindSlots:
 	    EmptySlot:
 		sta FreeSlots, y
 		iny
-		cpy #$40
+		cpy #$3f
 		bcc EmptySlot
 		sty EmptyIndex
 		ldy FullIndex
@@ -158,7 +158,7 @@ FindSlots:
 	    FullSlot:
 		sta UsedSlots, y
 		iny
-		cpy #$40
+		cpy #$3f
 		bcc FullSlot
 		sty FullIndex
 		

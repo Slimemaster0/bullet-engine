@@ -14,5 +14,5 @@ FreeFriBulllets = $0550
 FreeNmeBullets 	= $0560
 UsedSlots 	= $0580
 UsedEnemySlots 	= $0580
-UsedPlyBulllets = $0590
+UsedPlyBullets 	= $0590
 UsedNmeBullets 	= $05a0

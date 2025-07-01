@@ -8,6 +8,7 @@
 
 ; Exports
 .export Fire
+.export BulletTick
 
 Failure:
     ldx #$ff
@@ -38,8 +39,19 @@ Search:
 Done:
     rts
 
-; Set Y to the ID of the Bullet
+DistroyBullet:
+    lda #$00
+    sta Entities, x
+    lda #$fe
+    sta UsedSlots, y
+    rts
+
+; Set X to the ID of the Bullet and Y to the used slot
 BulletTick:
-    ldx SpriteIndex
-    dec EntityPosXs, y
-    lda 
+    dec EntityPosYs, x
+    lda EntityPosYs, x
+    cmp #$ff
+    beq DistroyBullet
+
+
+    rts

@@ -24,15 +24,13 @@
 ; Includes
 .include "system.h"
 .include "player.h"
-
-
-; Sprites
-SpriteIndex = 	$03fd
+.include "entity.h"
 
 
 ; Imports
 .import FindSlots
 .import Fire
+.import BulletTick
 
 
 
@@ -280,8 +278,18 @@ BtnA:
     
 InputDone:
     
+    
+    ldy #$0e
+HandlePlayerBullets:
+    iny
+    ldx UsedSlots, y
+    cpx #$fe
+    bcs EntityDone
+    jsr BulletTick
+    jmp HandlePlayerBullets
+    
 
-
+EntityDone:
     
     rti
 

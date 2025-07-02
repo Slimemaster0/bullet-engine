@@ -54,6 +54,7 @@ BulletTick:
     cmp #$fe
     bcs DistroyBullet
 
+    sty Temp1
     ; Build sprite
     ldy SpriteIndex
     sta $0200, y
@@ -69,7 +70,5 @@ BulletTick:
     iny
     sty SpriteIndex
 
-
-    
-
+    ldy Temp1
     rts

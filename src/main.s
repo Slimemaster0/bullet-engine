@@ -151,7 +151,7 @@ NMI:
 ClearOAM:
     inx
     sta $0200, x
-    cpx #$ff
+    cpx SpriteIndex
     bne ClearOAM
 
     jsr FindSlots
@@ -163,12 +163,11 @@ ClearOAM:
     dec FireCooldown
     
 BuildPlayerSprite:
-    lda #$00
-    sta SpriteIndex
+    ldx #$00
+    stx SpriteIndex
 
     clc
     ; build player
-    ldx SpriteIndex
 
     ; Sprite 1
     lda PlayerPosY
@@ -293,7 +292,7 @@ BtnA:
     txa 
     cmp #%10000000
     bcc InputDone
-    lda #$06
+    lda #$0a
     sta FireCooldown
     jsr Fire
     

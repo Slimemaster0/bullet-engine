@@ -10,19 +10,28 @@
 FindSlots:
     .scope outer
 
-    FullIndex 	= Temp1
-    EmptyIndex 	= Temp2
+    lda #$ff
+    tax
+ClearOldData:
+    inx
+    sta FreeSlots, x
+    cpx #$8f
+    bne ClearOldData
 
-    ldx #$00
-    stx FullIndex
-    stx EmptyIndex
+    EmptyIndex 	= Temp1
+    FullIndex 	= Temp2
+    ldy #$00
+    sty EmptyIndex
+    sty FullIndex
 
+
+    tax
 	Enemies:  ; {{{
 	.scope Enemies
-	    cpx #$0f
+	    inx
+	    cpx #$10
 	    bcs Epilogue
 	    lda Entities, x
-	    inx
 	    cmp #$00
 	    beq EmptySlot
 	    jmp FullSlot
@@ -43,34 +52,18 @@ FindSlots:
 	    jmp Enemies
 
 	Epilogue:
-	lda #$ff
-
-	ldy EmptyIndex
-	.scope epilogue
-	    EmptySlot:
-		sta FreeSlots, y
-		iny
-		cpy #$10
-		bcc EmptySlot
-		sty EmptyIndex
-		ldy FullIndex
-
-	    FullSlot:
-		sta UsedSlots, y
-		iny
-		cpy #$10
-		bcc FullSlot
-		sty FullIndex
-		
-	    .endscope
-
 	.endscope ; }}}
 
+	.scope FriendlyBullets ; {{{
+	Prologue:
+	ldx #$0f
+	ldy #$10
+	sty EmptyIndex
+	sty FullIndex
 
-	FriendlyBullets: ; {{{
-	.scope FriendlyBullets
-	    cpx #$1f
+	FriendlyBullets: 
 	    inx
+	    cpx #$20
 	    bcs Epilogue
 	    lda Entities, x
 	    cmp #$00
@@ -93,36 +86,20 @@ FindSlots:
 	    jmp FriendlyBullets
 
 	Epilogue:
-	lda #$ff
-
-	ldy EmptyIndex
-	.scope epilogue
-	    EmptySlot:
-		sta FreeSlots, y
-		iny
-		cpy #$20
-		bcc EmptySlot
-		sty EmptyIndex
-		ldy FullIndex
-
-	    FullSlot:
-		sta UsedSlots, y
-		iny
-		cpy #$20
-		bcc FullSlot
-		sty FullIndex
-		
-	    .endscope
-
 	.endscope ; }}}
 
+	.scope EnemyBullets  ; {{{
+	Prologue:
+	ldx #$1f
+	ldy #$10
+	sty EmptyIndex
+	sty FullIndex
 	    
-	EnemyBullets: ; {{{
-	.scope EnemyBullets
-	    cpx #$3f
+	EnemyBullets:
+	    inx
+	    cpx #$40
 	    bcs Epilogue
 	    lda Entities, x
-	    inx
 	    cmp #$00
 	    beq EmptySlot
 	    jmp FullSlot
@@ -144,26 +121,6 @@ FindSlots:
 
 	Epilogue:
 	lda #$ff
-
-	ldy EmptyIndex
-	.scope epilogue
-	    EmptySlot:
-		sta FreeSlots, y
-		iny
-		cpy #$40
-		bcc EmptySlot
-		sty EmptyIndex
-		ldy FullIndex
-
-	    FullSlot:
-		sta UsedSlots, y
-		iny
-		cpy #$40
-		bcc FullSlot
-		sty FullIndex
-		
-	    .endscope
-
 	.endscope ; }}}
 
     .endscope

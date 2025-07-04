@@ -9,6 +9,7 @@
 ; Exports
 .export Fire
 .export BulletTick
+.export DistroyBullet
 
 Failure:
     ldx #$ff
@@ -62,7 +63,7 @@ BulletTick:
     lda #$02
     sta $0200, y
     iny
-    lda #%00000010
+    lda #%00000000
     sta $0200, y
     iny
     lda EntityPosXs, x

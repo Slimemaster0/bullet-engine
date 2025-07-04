@@ -31,6 +31,7 @@
 .import FindSlots
 .import Fire
 .import BulletTick
+.import EnemyTick
 
 
 
@@ -127,10 +128,20 @@ ClearBackground:
     sta $2001
 
     ; Initialize veriables
-    lda #$40
+    lda #$78
     sta PlayerPosX
-    lda #$40
+    lda #$d0
     sta PlayerPosY
+
+    ; Tempurary debugging stuff
+    ; Spawn Debug Enemy
+    lda #$01
+    sta Enemies
+    lda #$20
+    sta EntityPosXs
+    sta EntityPosYs
+    lda #$00
+    sta EntityStatuses
 
 .endscope ; }}}
 
@@ -147,12 +158,12 @@ NMI:
     sta $4014
 
     lda #$ff
-    ldx #$0f
+    ldx #$10
 ClearOAM:
-    inx
     sta $0200, x
+    inx
     cpx SpriteIndex
-    bne ClearOAM
+    bcc ClearOAM
 
     jsr FindSlots
 
@@ -298,6 +309,17 @@ BtnA:
     
 InputDone:
     
+    ldy #$ff
+HandleEnemies:
+    iny
+    ldx UsedSlots, y
+    cpx #$fe
+    bcs HandleEnemyBullets
+    jsr EnemyTick
+    jmp HandleEnemies
+
+HandleEnemyBullets:
+    
     
     ldy #$0f
 HandlePlayerBullets:
@@ -337,7 +359,7 @@ Loop:
 
 PaletteData:
     .byte $00, $0F, $00, $10, 	$00, $0A, $15, $01, 	$00, $29, $28, $27, 	$00, $34, $24, $14 	; background palettes
-    .byte $31, $30, $27, $15, 	$00, $0F, $11, $30, 	$00, $0F, $30, $27, 	$00, $3C, $2C, $1C 	; sprite palettes
+    .byte $31, $30, $27, $15, 	$31, $06, $0f, $2d, 	$00, $0F, $30, $27, 	$00, $3C, $2C, $1C 	; sprite palettes
 
 .segment "VECTORS"
     .word NMI

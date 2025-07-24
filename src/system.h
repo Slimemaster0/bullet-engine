@@ -20,3 +20,4 @@ Buttons = 	$03fc
 
 Temp1 	= $ff
 Temp2 	= $fe
+Temp3 	= $fd

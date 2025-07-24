@@ -142,6 +142,8 @@ ClearBackground:
     sta EntityPosYs
     lda #$00
     sta EntityStatuses
+    lda #$00
+    sta EntityHealths
 
 .endscope ; }}}
 
@@ -283,9 +285,9 @@ Up:
 StartBtn:
     txa
     and #%00010000
-    bne SelectBtw
+    bne SelectBtn
     ; To do
-SelectBtw:
+SelectBtn:
     txa
     and #%00100000
     bne BtnB
@@ -293,7 +295,9 @@ SelectBtw:
 BtnB:
     txa
     and #%01000000
+    cmp #%01000000
     bne BtnA
+
     ; To do
 BtnA:
     lda FireCooldown
@@ -326,7 +330,9 @@ HandlePlayerBullets:
     iny
     ldx UsedSlots, y
     cpx #$fe
-    bcs EntityDone
+    bcc RunBulletTick
+    bne EntityDone
+RunBulletTick:
     jsr BulletTick
     jmp HandlePlayerBullets
     

@@ -5,6 +5,8 @@
 
 ; Includes
 .include "entity.h"
+.include "system.h"
+.include "player.h"
 
 ; Imports
 .import DistroyBullet
@@ -12,12 +14,91 @@
 ; Exports
 .export EnemyTick
 
+
+
+    
+
 ; Refrence enemy
 EnemyTick:
 .scope RefrenceEnemy
-	; Collision to do
+    .scope Collision
+	    ; Give tempurary veriables names for easyer readability
+	    EnemyID = 	Temp1
+	    EnemySlot = Temp2
+	    BulletSlot =Temp3
+	Prologue:
+	    stx EnemyID
+	    sty EnemySlot
+
+	    ldx #$0f
+	    stx BulletSlot
+	PreLoop:
+	    ldx BulletSlot
+	Loop:
+	    inx
+	    cpx #$20
+	    beq Epilogue
+	    ldy UsedSlots, x
+	    cpy #$fe
+	    bcs Epilogue
 	
-	; Movement
+	    stx BulletSlot
+	    ldx EnemyID
+	    clc
+	    
+	CheckBelow:
+	    lda EntityPosYs, x
+	    adc #$10
+	    cmp EntityPosYs, y
+	    bcc PreLoop
+	    clc
+
+	CheckAbove:
+	    lda EntityPosYs, y
+	    adc #$08
+	    cmp EntityPosYs, x
+	    bcc PreLoop
+	    clc
+
+	CheckLeft:
+	    lda EntityPosXs, y
+	    adc #$08
+	    cmp EntityPosXs, x
+	    bcc PreLoop
+	    clc
+
+	CheckRight:
+	    lda EntityPosXs, x
+	    adc #$10
+	    cmp EntityPosXs, y
+	    bcc PreLoop
+
+	    ; Distroy the bullet
+	    lda #$00
+	    sta Entities, y
+	    ldy BulletSlot
+	    lda #$fe
+	    sta UsedSlots, y
+
+	    dec EntityHealths, x
+	    lda EntityHealths, x
+	    cmp #$00
+	    bne Epilogue
+	    
+	    ldy EnemySlot
+
+	    sta Entities, x
+	    lda #$fe
+	    sta UsedSlots, y
+	
+
+	Epilogue:
+	    ldx EnemyID
+	    ldy EnemySlot
+
+    .endscope
+	
+    Movement:
 	lda EntityStatuses, x
 	cmp #%10000000
 	bcs MoveLeft
@@ -42,8 +123,47 @@ EnemyTick:
 
     MoveDone:
 	
+    DrawPrologue:
+	clc
+	sty Temp1
+	ldy SpriteIndex
+	cpy #$fd
+	bcs DrawEpilogue
     Draw:
-	
+	lda EntityPosYs, x
+	sta $0200, y
+	sta $0204, y
+	adc #$08
+	sta $0208, y
+	sta $020c, y
+	iny
+	lda #$03
+	sta $0200, y
+	sta $0204, y
+	lda #$04
+	sta $0208, y
+	sta $020c, y
+	iny
+	lda #%01000001
+	sta $0204, y
+	sta $0208, y
+	lda #%00000001
+	sta $0200, y
+	sta $020c, y
+	iny
+	lda EntityPosXs, x
+	sta $0200, y
+	sta $020c, y
+	adc #$08
+	sta $0208, y
+	sta $0204, y
+
+	tya 
+	adc #$0d
+	sta SpriteIndex
+
+    DrawEpilogue:
+	ldy Temp1
 
     Done:
 	rts

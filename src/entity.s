@@ -91,7 +91,7 @@ ClearOldData:
 	.scope EnemyBullets  ; {{{
 	Prologue:
 	ldx #$1f
-	ldy #$10
+	ldy #$20
 	sty EmptyIndex
 	sty FullIndex
 	    

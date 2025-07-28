@@ -32,6 +32,7 @@
 .import Fire
 .import BulletTick
 .import EnemyTick
+.import EnemyBulletTick
 
 
 
@@ -142,7 +143,7 @@ ClearBackground:
     sta EntityPosYs
     lda #$00
     sta EntityStatuses
-    lda #$00
+    lda #$05
     sta EntityHealths
 
 .endscope ; }}}
@@ -159,6 +160,9 @@ NMI:
     lda #$02
     sta $4014
 
+    ; Incriment clock
+    inc GlobalClock
+    
     lda #$ff
     ldx #$10
 ClearOAM:
@@ -174,7 +178,7 @@ ClearOAM:
     cmp #$00
     beq BuildPlayerSprite
     dec FireCooldown
-    
+
 BuildPlayerSprite:
     ldx #$00
     stx SpriteIndex
@@ -318,13 +322,24 @@ HandleEnemies:
     iny
     ldx UsedSlots, y
     cpx #$fe
-    bcs HandleEnemyBullets
+    bcs HandleEnemyBulletsPrelude
     jsr EnemyTick
     jmp HandleEnemies
 
+HandleEnemyBulletsPrelude:
+    ldy #$1f
 HandleEnemyBullets:
+    iny
+    ldx UsedSlots, y
+    cpx #$fe
+    bcc RunEnemyBulletTick
+    bne HandlePlayerBulletsPrelude
+RunEnemyBulletTick:
+    jsr EnemyBulletTick
+    jmp HandleEnemyBullets
     
     
+HandlePlayerBulletsPrelude:
     ldy #$0f
 HandlePlayerBullets:
     iny

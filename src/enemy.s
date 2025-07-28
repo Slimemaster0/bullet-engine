@@ -8,11 +8,9 @@
 .include "system.h"
 .include "player.h"
 
-; Imports
-.import DistroyBullet
-
 ; Exports
 .export EnemyTick
+.export EnemyBulletTick
 
 
 
@@ -164,11 +162,79 @@ EnemyTick:
 
     DrawEpilogue:
 	ldy Temp1
+    
+	; Fire bullets
+	txa
+	adc GlobalClock
+	and #%00111111
+	cmp #$00
+	bne FireDone
 
+	ldy #$1f
+    Search:
+	iny
+	cpy #$40
+	beq FireEpilogue
+	lda Entities, y
+	cmp #$00
+	bne Search
+
+	; Placing the bullet
+	lda #$01
+	sta Entities, y
+	lda EntityPosXs, x
+	adc #$03
+	sta EntityPosXs, y
+	lda EntityPosYs, x
+	adc #$04
+	sta EntityPosYs, y
+	lda #$ff
+	sta EntityHealths, y
+	sta EntityStatuses, y
+	
+
+    FireEpilogue:
+    ldy Temp1
+
+    FireDone:
+    
     Done:
 	rts
 .endscope
 
+DistroyBullet:
+    lda #$00
+    sta Entities, x
+    lda #$fe
+    sta UsedSlots, y
+    rts
+
+EnemyBulletTick:
+    inc EntityPosYs, x
+    inc EntityPosYs, x
+    lda EntityPosYs, x
+    cmp #$fe
+    bcs DistroyBullet
+
+    sty Temp1
+    ; Build sprite
+    ldy SpriteIndex
+    sta $0200, y
+    iny
+    lda #$02
+    sta $0200, y
+    iny
+    lda #%10000001
+    sta $0200, y
+    iny
+    lda EntityPosXs, x
+    sta $0200, y
+    iny
+    sty SpriteIndex
+
+    ldy Temp1
+    rts
+    
 
 
 EnemyHP: ; {{{

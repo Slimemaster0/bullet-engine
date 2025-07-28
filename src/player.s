@@ -30,7 +30,7 @@ Search:
     lda #$01
     sta Entities, x
     lda PlayerPosX
-    adc #$03 ; Adding 8 because I know the carry flag is set
+    adc #$03 ; Adding 4 because I know the carry flag is set
     sta EntityPosXs, x
     lda PlayerPosY
     sta EntityPosYs, x

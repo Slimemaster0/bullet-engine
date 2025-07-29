@@ -38,6 +38,7 @@ EnemyTick:
 	    beq Epilogue
 	    ldy UsedSlots, x
 	    cpy #$fe
+	    beq Loop
 	    bcs Epilogue
 	
 	    stx BulletSlot

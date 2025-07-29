@@ -24,3 +24,5 @@ Temp3 	= $fd
 
 
 GlobalClock	= $ef
+Scroll 		= $ee
+Control		= $ed

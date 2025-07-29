@@ -6,7 +6,7 @@
     .byte $4E, $45, $53, $1A
     .byte 2
     .byte 1
-    .byte $01, $05
+    .byte $00, $05
 
 .export Main
 .segment "CODE"
@@ -123,6 +123,7 @@ ClearBackground:
     cli
 
     lda #%10010000
+    sta Control
     sta $2000 		; When VBlank occurs call NMI
 
     lda #%00011110 	; Show sprites and background
@@ -162,6 +163,27 @@ NMI:
 
     ; Incriment clock
     inc GlobalClock
+
+    ; Scroling
+    lda #$00
+    sta PPUScroll
+    lda Scroll
+    sbc #$01
+    sta PPUScroll
+    sta Scroll
+    cmp #$00
+    bne ScrollDone
+
+    sta PPUScroll
+    lda #$ee
+    sta PPUScroll
+    sta Scroll
+    lda Control
+    eor #%00000010
+    sta PPUCtrl
+    sta Control
+
+ScrollDone:
     
     lda #$ff
     ldx #$10
@@ -316,6 +338,57 @@ BtnA:
     jsr Fire
     
 InputDone:
+
+    .scope Collision
+	ldx #$1f
+    Loop:
+	inx
+	cpx #$40
+	beq Done
+	ldy UsedSlots, x
+	cpy #$fe
+	beq Loop
+	bcs Done
+
+	clc
+
+	CheckBelow:
+	    lda PlayerPosY
+	    adc #$10
+	    cmp EntityPosYs, y
+	    bcc Loop
+	    clc
+
+	CheckAbove:
+	    lda EntityPosYs, y
+	    adc #$08
+	    cmp PlayerPosY
+	    bcc Loop
+	    clc
+
+	CheckLeft:
+	    lda EntityPosXs, y
+	    adc #$08
+	    cmp PlayerPosX
+	    bcc Loop
+	    clc
+
+	CheckRight:
+	    lda PlayerPosX
+	    adc #$10
+	    cmp EntityPosXs, y
+	    bcc Loop
+
+	lda #$00    
+	sta Entities, y
+	lda #$fe
+	sta UsedSlots, y
+	
+	jmp RESET
+
+
+    Done:
+    .endscope
     
     ldy #$ff
 HandleEnemies:

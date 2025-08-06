@@ -33,6 +33,7 @@
 .import BulletTick
 .import EnemyTick
 .import EnemyBulletTick
+.import DrawMap
 
 
 
@@ -97,34 +98,11 @@ LoadPalettes:
     sta $2005
     sta $2005
 
-ClearBackground:
-	lda $2002 ; Read PPU status to reset high/low latch
-	lda #$20
-	sta $2006
-	lda #$00
-	; Store #$00 in X and Y
-	tay
-	tax
-	sta $2006
-	lda #$ff
-	ClearBackground1:
-	    sta $2007
-	    inx
-	    cpx #$00
-	    bne ClearBackground1
-	    iny
-	    cpy #$04
-	    bne ClearBackground1
 
-    
+    jsr DrawMap
 
 
-    ; Enable Interupts
     cli
-
-    lda #%10010000
-    sta Control
-    sta $2000 		; When VBlank occurs call NMI
 
     lda #%00011110 	; Show sprites and background
     sta $2001
@@ -146,6 +124,11 @@ ClearBackground:
     sta EntityStatuses
     lda #$05
     sta EntityHealths
+
+    ; Enable Interupts
+    lda #%10010000
+    sta Control
+    sta $2000 		; When VBlank occurs call NMI
 
 .endscope ; }}}
 
@@ -426,7 +409,7 @@ RunBulletTick:
     
 
 EntityDone:
-    
+
     rti
 
 
@@ -452,7 +435,7 @@ Loop:
     rts
 
 PaletteData:
-    .byte $00, $0F, $00, $10, 	$00, $0A, $15, $01, 	$00, $29, $28, $27, 	$00, $34, $24, $14 	; background palettes
+    .byte $00, $0F, $00, $10, 	$00, $29, $1a, $11, 	$00, $29, $28, $27, 	$00, $34, $24, $14 	; background palettes
     .byte $31, $30, $27, $15, 	$31, $06, $0f, $2d, 	$00, $0F, $30, $27, 	$00, $3C, $2C, $1C 	; sprite palettes
 
 .segment "VECTORS"

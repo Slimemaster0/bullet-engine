@@ -154,11 +154,12 @@ NMI:
     sbc #$01
     sta PPUScroll
     sta Scroll
-    cmp #$00
+    cmp #$ff
     bne ScrollDone
 
+    lda #$00
     sta PPUScroll
-    lda #$ee
+    lda #$ef
     sta PPUScroll
     sta Scroll
     lda Control

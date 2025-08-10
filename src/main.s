@@ -98,7 +98,10 @@ LoadPalettes:
     sta $2005
     sta $2005
 
-
+    sta Temp1
+    
+    ldx #$20
+    ldy #$00
     jsr DrawMap
 
 

@@ -7,45 +7,67 @@
 
 DrawMap:
     lda $2002
-    lda #$20
-    sta $2006
-    sta Temp1
-    lda #$00
-    sta $2006
-    sta Temp2
+    stx $2006
+    sty $2006
+    
+    ldx Temp1
+    lda TableLo, x
+    sta PointerLo
+    lda TableHi, x
+    sta PointerHi
+
     
     clc
-    ldx #$ff
+    ldy #$ff
 Loop:
-    inx
-    ldy Screen1, x
+    iny
     cpy #$00
+    bne _
+    inc PointerHi
+    _:
+    lda ($00), y
+    tax
+    cpx #$00
     beq Done
-    inx
-WriteRLE:
-    lda Screen1, x
-    sta $2007
-    dey
+    iny
     cpy #$00
     bne WriteRLE
+    inc PointerHi
+WriteRLE:
+    lda ($00), y
+    sta $2007
+    dex
+    cpx #$00
+    bne WriteRLE
 
-    inx
-    ldy Screen1, x
-WriteImmediate:
+    iny
     cpy #$00
+    bne WriteImmediatePrelude
+    inc PointerHi
+WriteImmediatePrelude:
+    lda ($00), y
+    tax
+WriteImmediate:
+    cpx #$00
     beq Loop
-    inx
-    lda Screen1, x
+    iny
+    lda ($00), y
     sta $2007
 
-    dey
-    cpy #$00
+    dex
+    cpx #$00
     bne WriteImmediate
     jmp Loop
     
     Done:
     
     rts
+
+TableLo:
+    .byte <Screen1
+
+TableHi:
+    .byte >Screen1 -1
     
 
 Screen1:

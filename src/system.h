@@ -22,6 +22,9 @@ Temp1 	= $ff
 Temp2 	= $fe
 Temp3 	= $fd
 
+PointerLo = $00
+PointerHi = $01
+
 
 GlobalClock	= $ef
 Scroll 		= $ee

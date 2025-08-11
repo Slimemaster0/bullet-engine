@@ -11,6 +11,7 @@
 ; Exports
 .export EnemyTick
 .export EnemyBulletTick
+.export EnemyHP
 
 
 

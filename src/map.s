@@ -2,10 +2,18 @@
 ; vim:fileencoding=utf-8:foldmethod=marker
 
 .include "system.h"
+.include "map.h"
+.include "entity.h"
 
 .export DrawMap
+.export MapProgress
+.export MapPointersLo
+.export MapPointersHi
 
-DrawMap:
+.import EnemyHP
+
+DrawMap: ; {{{
+    .scope Drawing
     lda $2002
     stx $2006
     sty $2006
@@ -22,9 +30,9 @@ DrawMap:
 Loop:
     iny
     cpy #$00
-    bne _
+    bne skip1
     inc PointerHi
-    _:
+skip1:
     lda ($00), y
     tax
     cpx #$00
@@ -51,6 +59,10 @@ WriteImmediate:
     cpx #$00
     beq Loop
     iny
+    cpy #$00
+    bne skip2
+    inc PointerHi
+skip2:
     lda ($00), y
     sta $2007
 
@@ -64,11 +76,209 @@ WriteImmediate:
     rts
 
 TableLo:
-    .byte <Screen1
+    .byte <Screen1, 	<Screen2
 
 TableHi:
-    .byte >Screen1 -1
+    .byte >Screen1 -1, 	>Screen2 -1
     
 
 Screen1:
 .incbin "../screens/screen1"
+Screen2:
+.incbin "../screens/screen2"
+.endscope
+; }}}
+
+
+
+MapProgress:
+.scope MapProgress
+	lda #$ff
+	dec MapPosLo
+	cmp MapPosLo
+	bne DontRun
+	dec MapPosHi
+	cmp MapPosHi
+	beq RunRutine
+    DontRun:
+	rts
+
+    RunRutine:
+	; Increment and load map pointer
+	clc
+	lda MapPointerLo
+	adc #$01
+	sta PointerLo
+
+	lda MapPointerHi
+	adc #$00
+	sta PointerHi
+
+	ldy #$00
+	
+
+
+    Check:
+	; Quick and dirty check
+	lda ($00), y
+	cmp #$00
+	beq SpawnEnemy
+	cmp #$01
+	beq ChangeBackground
+	cmp #$ff
+	beq End
+
+	jmp Finish
+
+    Done:
+    .scope local
+	clc
+	lda PointerLo
+	adc #$01
+	sta PointerLo
+	lda PointerHi
+	adc #$00
+	sta PointerHi
+	lda ($00), y
+	tax
+
+	lda PointerLo
+	adc #$01
+	sta PointerLo
+	lda PointerHi
+	adc #$00
+	sta PointerHi
+	lda ($00), y
+	tay
+
+	cpx #$00
+	bne StoreAndReturn
+	cpy #$00
+	bne StoreAndReturn
+	
+	inc PointerLo
+	lda #$00
+	cmp PointerLo
+	bne Check
+	inc PointerHi
+
+	ldy #$00
+
+	jmp Check
+	
+    StoreAndReturn:
+	stx MapPosHi
+	sty MapPosLo
+
+	jmp Finish
+    .endscope
+	
+
+    Finish:
+	lda PointerLo
+	sta MapPointerLo
+	lda PointerHi
+	sta MapPointerHi
+	rts
+
+
+    End:
+	sec
+	lda PointerLo
+	sbc #$03
+	sta PointerLo
+	lda PointerHi
+	sbc #$00
+
+	jmp Done
+
+
+    ChangeBackground:
+	clc
+	lda PointerLo
+	adc #$04
+	sta PointerLo
+	lda PointerHi
+	adc #$00
+	sta PointerHi
+	
+
+	jmp Done
+
+
+    SpawnEnemy:
+    .scope SpawnEnemy
+	    ldx #$ff
+	Search:
+	    inx
+	    cpx #$10
+	    beq Failure
+	    lda Entities, x
+	    cmp #$00
+	    bne Search
+
+	Spawn:
+	    ldy #$01
+
+	    lda ($00), y
+	    sta Entities, x
+	    tay
+	    lda EnemyHP, y
+	    sta EntityHealths, x
+	    
+	    ldy #$02
+
+	    lda ($00), y
+	    sta EntityPosXs, x
+
+	    iny
+	    lda ($00), y
+	    sta EntityPosYs, x
+	    
+	    clc
+	    lda PointerLo
+	    adc #$03
+	    sta PointerLo
+	    lda PointerHi
+	    adc #$00
+	    sta PointerHi
+	    
+	    
+	    jmp Done
+
+	Failure:
+	    clc
+	    lda PointerLo
+	    adc #$03
+	    sta PointerLo
+	    lda PointerHi
+	    adc #$00
+	    sta PointerHi
+	    
+	    ldx #$ff
+	    jmp Done
+
+	.endscope
+
+.endscope
+
+MapPointersLo:
+    .byte <Map1 +1
+
+MapPointersHi:
+    .byte >Map1
+
+; Map data
+; Map format: TimeHi, TimeLo, command id, args
+;
+; Commands: 		$ID, args
+; Spawn Enemy: 		$00, enemy id, X possiton, Y possiton
+; Change background: 	$01, background id, Nametable Hi Name TableLo
+; End 			$ff
+
+Map1:
+;    .byte $00, $00, $01, $00, $20, $00
+;    .byte $00, $00, $01, $01, $28, $00
+
+    .byte $00, $00, $00, $01, $30, $10
+    .byte $ff, $ff, $ff

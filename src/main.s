@@ -25,6 +25,7 @@
 .include "system.h"
 .include "player.h"
 .include "entity.h"
+.include "map.h"
 
 
 ; Imports
@@ -34,6 +35,9 @@
 .import EnemyTick
 .import EnemyBulletTick
 .import DrawMap
+.import MapProgress
+.import MapPointersLo
+.import MapPointersHi
 
 
 
@@ -104,6 +108,13 @@ LoadPalettes:
     ldy #$00
     jsr DrawMap
 
+    lda #$01
+    sta Temp1
+    lda #$00
+    ldx #$28
+    ldy #$00
+    jsr DrawMap
+
 
     cli
 
@@ -115,6 +126,11 @@ LoadPalettes:
     sta PlayerPosX
     lda #$d0
     sta PlayerPosY
+
+    lda MapPointersLo
+    sta MapPointerLo
+    lda MapPointersHi
+    sta MapPointerHi
 
     ; Tempurary debugging stuff
     ; Spawn Debug Enemy
@@ -376,6 +392,8 @@ InputDone:
 
     Done:
     .endscope
+
+    jsr MapProgress
     
     ldy #$ff
 HandleEnemies:

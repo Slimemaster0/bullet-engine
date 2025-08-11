@@ -234,6 +234,9 @@ MapProgress:
 	    iny
 	    lda ($00), y
 	    sta EntityPosYs, x
+
+	    lda #$00
+	    sta EntityStatuses, x
 	    
 	    clc
 	    lda PointerLo

@@ -132,18 +132,6 @@ LoadPalettes:
     lda MapPointersHi
     sta MapPointerHi
 
-    ; Tempurary debugging stuff
-    ; Spawn Debug Enemy
-    lda #$01
-    sta Enemies
-    lda #$20
-    sta EntityPosXs
-    sta EntityPosYs
-    lda #$00
-    sta EntityStatuses
-    lda #$05
-    sta EntityHealths
-
     ; Enable Interupts
     lda #%10010000
     sta Control

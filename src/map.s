@@ -35,31 +35,26 @@ Loop:
 skip1:
     lda ($00), y
     tax
-    cpx #$00
     beq Done
     iny
-    cpy #$00
-    bne WriteRLE
+    bne LoadTile
     inc PointerHi
-WriteRLE:
+LoadTile:
     lda ($00), y
+WriteRLE:
     sta $2007
     dex
-    cpx #$00
     bne WriteRLE
 
     iny
-    cpy #$00
     bne WriteImmediatePrelude
     inc PointerHi
 WriteImmediatePrelude:
     lda ($00), y
     tax
 WriteImmediate:
-    cpx #$00
     beq Loop
     iny
-    cpy #$00
     bne skip2
     inc PointerHi
 skip2:
@@ -67,8 +62,8 @@ skip2:
     sta $2007
 
     dex
-    cpx #$00
     bne WriteImmediate
+
     jmp Loop
     
     Done:
@@ -76,22 +71,24 @@ skip2:
     rts
 
 TableLo:
-    .byte <Screen1, 	<Screen2
+    .byte <Screen1, 	<Screen2,    <Status
 
 TableHi:
-    .byte >Screen1 -1, 	>Screen2 -1
+    .byte >Screen1 -1, 	>Screen2 -1, >Status -1
     
 
 Screen1:
 .incbin "../screens/screen1"
 Screen2:
 .incbin "../screens/screen2"
+
+
+Status:
+.incbin "../screens/statusbar"
 .endscope
 ; }}}
 
-
-
-MapProgress:
+MapProgress: ; {{{
 .scope MapProgress
 	lda #$ff
 	dec MapPosLo
@@ -276,7 +273,8 @@ MapPointersHi:
 ;
 ; Commands: 		$ID, args
 ; Spawn Enemy: 		$00, enemy id, X possiton, Y possiton
-; Change background: 	$01, background id, Nametable Hi Name TableLo
+; Change background: 	$01, background id, Nametable Hi Name Table Lo
+; Change Palettes:	$03, Palette1 Id, Palette2 Id, Palette3 Id, Palette3 Id, Palette4 Id
 ; End 			$ff
 
 Map1:
@@ -286,3 +284,23 @@ Map1:
     .byte $00, $00, $00, $01, $30, $10
     .byte $01, $00, $00, $01, $30, $10
     .byte $ff, $ff, $ff
+
+
+PaletteColor1:
+    .byte $31, $31, $31, $31 ; $00-$03
+    .byte $2a, $2a, $2a, $2a ; $04-$07
+
+PaletteColor2:
+    .byte $0f, $29, $29, $34 ; $00-$03
+    .byte $17 		     ; $04-$07
+
+PaletteColor3:
+    .byte $00, $1a, $28, $24 ; $00-$03
+    .byte $09
+
+
+PaletteColor4:
+    .byte $10, $11, $27, $14 ; $00-$03
+    .byte $19 		     ; $04-$07
+
+; }}}

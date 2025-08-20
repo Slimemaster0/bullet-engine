@@ -19,14 +19,13 @@ DrawMap: ; {{{
     sty $2006
     
     ldx Temp1
-    lda TableLo, x
+    lda #$00
     sta PointerLo
+    ldy TableLo, x
     lda TableHi, x
     sta PointerHi
 
-    
-    clc
-    ldy #$ff
+    dey
 Loop:
     iny
     cpy #$00 ; DO NOT TOUCH!!!
@@ -71,10 +70,10 @@ skip2:
     rts
 
 TableLo:
-    .byte <Screen1, 	<Screen2,    <Status
+    .byte <Screen1, <Screen2, <Status
 
 TableHi:
-    .byte >Screen1 -1, 	>Screen2 -1, >Status -1
+    .byte >Screen1, >Screen2, >Status
     
 
 Screen1:

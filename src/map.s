@@ -29,7 +29,7 @@ DrawMap: ; {{{
     ldy #$ff
 Loop:
     iny
-    cpy #$00
+    cpy #$00 ; DO NOT TOUCH!!!
     bne skip1
     inc PointerHi
 skip1:

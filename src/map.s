@@ -32,8 +32,7 @@ Loop:
     bne skip1
     inc PointerHi
 skip1:
-    lda ($00), y
-    tax
+    lax ($00), y
     beq Done
     iny
     bne LoadTile
@@ -49,8 +48,7 @@ WriteRLE:
     bne WriteImmediatePrelude
     inc PointerHi
 WriteImmediatePrelude:
-    lda ($00), y
-    tax
+    lax ($00), y
 WriteImmediate:
     beq Loop
     iny

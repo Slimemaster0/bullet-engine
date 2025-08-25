@@ -128,7 +128,7 @@ char* parse(char* input) {
 
 	// Writing RLE
 	for (char j = 0; j < iterations; j++) {
-	    assert(writeIndex >= 1024);
+	    assert(writeIndex <= 1024);
 	    buffer[writeIndex] = input[readIndex];
 	    writeIndex++;
 	}
@@ -140,7 +140,7 @@ char* parse(char* input) {
 	
 	// Write immediate
 	for (char j = 0; j < iterations; j++) {
-	    assert(writeIndex >= 1024);
+	    assert(writeIndex <= 1024);
 	    buffer[writeIndex] = input[readIndex];
 	    writeIndex++;
 	    readIndex++;
